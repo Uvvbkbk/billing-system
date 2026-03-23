@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商用对账单生成系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .customer-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .customer-bar label {
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .customer-bar select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .customer-bar input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .customer-bar button {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .customer-bar button:hover {
+            background: #5568d3;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .btn-export {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background: #40c057;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .date-group-header {
+            background: #70AD47;
+            color: white;
+            font-weight: bold;
+        }
+
+        .date-group-header td {
+            padding: 10px 12px;
+        }
+
+        .subtotal-row {
+            background: #E2EFDA;
+            font-weight: bold;
+        }
+
+        .subtotal-row td {
+            padding: 10px 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .export-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .export-section h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .date-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .date-range input {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .customer-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .customer-bar select,
+            .customer-bar input,
+            .customer-bar button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 商用对账单生成系统</h1>
+            <p>简洁高效的对账单管理和生成工具</p>
+        </div>
+
+        <!-- 客户管理栏 -->
+        <div class="customer-bar">
+            <label>选择客户：</label>
+            <select id="customerSelect" onchange="switchCustomer()">
+                <option value="">-- 选择客户 --</option>
+            </select>
+            
+            <input type="text" id="newCustomerName" placeholder="输入新客户名称">
+            <button onclick="addCustomer()">➕ 新增客户</button>
+            <button class="btn-danger" onclick="deleteCurrentCustomer()" style="background: #ff6b6b;">🗑️ 删除客户</button>
+        </div>
+
+        <div class="main-content">
+            <!-- 左侧：表单和统计 -->
+            <div class="section">
+                <h2>添加对账项目</h2>
+                
+                <div id="message" class="message"></div>
+
+                <form id="itemForm">
+                    <div class="form-group">
+                        <label>交易日期 *</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>品名 *</label>
+                        <input type="text" id="productName" placeholder="例如: 苹果、笔记本" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>数量 *</label>
+                        <input type="number" id="quantity" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>单位 *</label>
+                        <input type="text" id="unit" placeholder="例如: 个、箱、吨" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>单价 (¥) *</label>
+                        <input type="number" id="unitPrice" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>金额 (自动计算)</label>
+                        <input type="text" id="amountDisplay" readonly style="background: #f8f9fa; cursor: not-allowed;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="notes" placeholder="添加备注信息..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%;">➕ 添加项目</button>
+                </form>
+
+                <h2 style="margin-top: 30px;">对账统计</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-label">总项目数</div>
+                        <div class="stat-value" id="totalItems">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">日期数</div>
+                        <div class="stat-value" id="dateCount">0</div>
+                    </div>
+                    <div class="stat-card" style="grid-column: 1 / -1;">
+                        <div class="stat-label">总金额</div>
+                        <div class="stat-value" id="totalAmount">¥0.00</div>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <h3>📥 导出对账单</h3>
+                    <div class="date-range">
+                        <div>
+                            <label style="font-size: 12px;">开始日期</label>
+                            <input type="date" id="exportStartDate">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px;">结束日期</label>
+                            <input type="date" id="exportEndDate">
+                        </div>
+                    </div>
+                    <button class="btn-export" style="width: 100%;" onclick="exportReconciliation()">
+                        📥 导出为 Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧：对账项目列表 -->
+            <div class="section">
+                <h2>对账项目列表</h2>
+                
+                <div class="table-container" style="flex: 1; overflow-y: auto;">
+                    <table id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>品名</th>
+                                <th>数量</th>
+                                <th>单位</th>
+                                <th>单价</th>
+                                <th>金额</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <div>请先选择或创建客户</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCustomerId = null;
+
+        // 设置今天的日期为默认值
+        document.getElementById('transactionDate').valueAsDate = new Date();
+        document.getElementById('exportEndDate').valueAsDate = new Date();
+
+        // 监听数量和单价变化，自动计算金额
+        document.getElementById('quantity').addEventListener('input', updateAmount);
+        document.getElementById('unitPrice').addEventListener('input', updateAmount);
+
+        function updateAmount() {
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+            const amount = quantity * unitPrice;
+            document.getElementById('amountDisplay').value = amount.toFixed(2);
+        }
+
+        // 加载客户列表
+        async function loadCustomers() {
+            try {
+                const response = await fetch('/api/customers');
+                const customers = await response.json();
+                
+                const select = document.getElementById('customerSelect');
+                select.innerHTML = '<option value="">-- 选择客户 --</option>';
+                
+                customers.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.id;
+                    option.textContent = customer.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('加载客户列表失败:', error);
+            }
+        }
+
+        // 切换客户
+        async function switchCustomer() {
+            const customerId = document.getElementById('customerSelect').value;
+            
+            if (!customerId) {
+                currentCustomerId = null;
+                document.getElementById('itemsBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div>请先选择或创建客户</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            currentCustomerId = customerId;
+            loadItems();
+            loadStats();
+        }
+
+        // 添加客户
+        async function addCustomer() {
+            const name = document.getElementById('newCustomerName').value.trim();
+            
+            if (!name) {
+                showMessage('✗ 请输入客户名称', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/customers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                
+                if (response.ok) {
+                    showMessage('✓ 客户添加成功', 'success');
+                    document.getElementById('newCustomerName').value = '';
+                    loadCustomers();
+                } else {
+                    const error = await response.json();
+                    showMessage(`✗ ${error.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('添加客户失败:', error);
+                showMessage('✗ 网络错误', 'error');
+            }
+        }
+
+        // 删除当前客户
+        async function deleteCurrentCustomer() {
+            if (!currentCustomerId) {
+                showMessage('✗ 请先选择要删除的客户', 'error');
+                return;
+            }
+            
+            if (!confirm('确定要删除此客户及其所有数据吗？此操作无法撤销！')) return;
+            
+            try {
+                const response = await fetch(`/api/customers/${currentCustomerId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showMessage('✓ 客户已删除', 'success');
+                    currentCustomerId = null;
+                    document.getElementById('customerSelect').value = '';
+                    loadCustomers();
+                    document.getElementById('itemsBody').innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <div>请先选择或创建客户</div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    showMessage('✗ 删除失败', 'error');
+                }
+            } catch (error) {
+                console.error('删除客户失败:', error);
+                showMessage('✗ 网络错误', 'error');
+            }
+        }
+
+        // 加载项目列表
+        async function loadItems() {
+            if (!currentCustomerId) return;
+            
+            try {
+                const response = await fetch(`/api/items?customer_id=${currentCustomerId}`);
+                const grouped = await response.json();
+                renderItems(grouped);
+            } catch (error) {
+                console.error('加载项目失败:', error);
+            }
+        }
+
+        // 渲染项目列表（按日期分组）
+        function renderItems(grouped) {
+            const tbody = document.getElementById('itemsBody');
+            
+            const dates = Object.keys(grouped).sort().reverse();
+            
+            if (dates.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div>暂无数据，请添加对账项目</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            dates.forEach(date => {
+                const items = grouped[date];
+                
+                // 日期分组头
+                html += `
+                    <tr class="date-group-header">
+                        <td colspan="7">📅 ${date}</td>
+                    </tr>
+                `;
+                
+                // 该日期的项目
+                let dateTotal = 0;
+                items.forEach((item, idx) => {
+                    const amount = item.quantity * item.unit_price;
+                    dateTotal += amount;
+                    
+                    html += `
+                        <tr>
+                            <td></td>
+                            <td>${item.product_name}</td>
+                            <td style="text-align: right;">${item.quantity.toFixed(2)}</td>
+                            <td style="text-align: center;">${item.unit}</td>
+                            <td style="text-align: right;">¥${item.unit_price.toFixed(2)}</td>
+                            <td style="text-align: right;">¥${amount.toFixed(2)}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-danger" onclick="deleteItem(${item.id})">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                // 小计行
+                html += `
+                    <tr class="subtotal-row">
+                        <td colspan="5" style="text-align: right;">小计：</td>
+                        <td style="text-align: right;">¥${dateTotal.toFixed(2)}</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // 加载统计信息
+        async function loadStats() {
+            if (!currentCustomerId) {
+                document.getElementById('totalItems').textContent = '0';
+                document.getElementById('dateCount').textContent = '0';
+                document.getElementById('totalAmount').textContent = '¥0.00';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/stats?customer_id=${currentCustomerId}`);
+                const stats = await response.json();
+                
+                document.getElementById('totalItems').textContent = stats.total_items;
+                document.getElementById('dateCount').textContent = stats.date_count;
+                document.getElementById('totalAmount').textContent = `¥${stats.total_amount.toFixed(2)}`;
+            } catch (error) {
+                console.error('加载统计信息失败:', error);
+            }
+        }
+
+        // 添加项目
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentCustomerId) {
+                showMessage('✗ 请先选择客户', 'error');
+                return;
+            }
+            
+            const data = {
+                customer_id: currentCustomerId,
+                transaction_date: document.getElementById('transactionDate').value,
+                product_name: document.getElementById('productName').value,
+                quantity: document.getElementById('quantity').value,
+                unit: document.getElementById('unit').value,
+                unit_price: document.getElementById('unitPrice').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showMessage('✓ 项目添加成功', 'success');
+                    document.getElementById('itemForm').reset();
+                    document.getElementById('transactionDate').valueAsDate = new Date();
+                    document.getElementById('amountDisplay').value = '0.00';
+                    loadItems();
+                    loadStats();
+                } else {
+                    showMessage('✗ 添加失败，请重试', 'error');
+                }
+            } catch (error) {
+                console.error('添加项目失败:', error);
+                showMessage('✗ 网络错误', 'error');
+            }
+        });
+
+        // 删除项目
+        async function deleteItem(id) {
+            if (!confirm('确定要删除这个项目吗？')) return;
+
+            try {
+                const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showMessage('✓ 项目已删除', 'success');
+                    loadItems();
+                    loadStats();
+                } else {
+                    showMessage('✗ 删除失败', 'error');
+                }
+            } catch (error) {
+                console.error('删除项目失败:', error);
+                showMessage('✗ 网络错误', 'error');
+            }
+        }
+
+        // 导出为 Excel
+        async function exportReconciliation() {
+            if (!currentCustomerId) {
+                showMessage('✗ 请先选择客户', 'error');
+                return;
+            }
+            
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            
+            try {
+                const response = await fetch('/api/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_id: currentCustomerId,
+                        start_date: startDate,
+                        end_date: endDate
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `对账单_${new Date().toISOString().split('T')[0]}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showMessage('✓ 导出成功', 'success');
+                } else {
+                    showMessage('✗ 导出失败', 'error');
+                }
+            } catch (error) {
+                console.error('导出失败:', error);
+                showMessage('✗ 网络错误', 'error');
+            }
+        }
+
+        // 显示消息
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 3000);
+        }
+
+        // 页面加载时获取客户列表
+        loadCustomers();
+    </script>
+</body>
+</html>

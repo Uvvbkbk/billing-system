@@ -1,0 +1,37 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.46:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 535-271-243
+127.0.0.1 - - [19/Mar/2026 23:33:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:33:10] "GET /api/customers HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:33:10] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [19/Mar/2026 23:34:37] "[35m[1mPOST /api/customers HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:34:37] "GET /api/customers HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:34:40] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:34:40] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:34:43] "[35m[1mPOST /api/items HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:34:43] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:34:43] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:35:14] "[35m[1mPOST /api/items HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:35:14] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:35:14] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:35:45] "[35m[1mPOST /api/items HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:35:45] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:35:45] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:36:03] "POST /api/export HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:48:58] "POST /api/export HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:50:25] "[35m[1mPOST /api/items HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:50:25] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:50:25] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:50:46] "DELETE /api/items/4 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:50:46] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:50:46] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:52:02] "[35m[1mPOST /api/items HTTP/1.1[0m" 201 -
+127.0.0.1 - - [19/Mar/2026 23:52:02] "GET /api/items?customer_id=1 HTTP/1.1" 200 -
+127.0.0.1 - - [19/Mar/2026 23:52:02] "GET /api/stats?customer_id=1 HTTP/1.1" 200 -
